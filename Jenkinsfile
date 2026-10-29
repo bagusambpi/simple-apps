@@ -16,6 +16,28 @@ pipeline {
                 '''
             }
         }
+
+        stage('Set ENV') {
+            steps {
+                withCredentials ([
+                    string(credentialsId: 'db-name', variable: 'db-name'),
+                    string(credentialsId: 'db-user', variable: 'db-user'),
+                    string(credentialsId: 'db-password', variable: 'db-password'),
+                    string(credentialsId: 'db-host', variable: 'db-host'),
+                    string(credentialsId: 'app-port', variable: 'app-port')
+                ])
+                sh'''
+                cd apps
+                cat >> .env < \
+                - DB_NAME={db-name}
+                - DB_HOST={db-host}
+                - DB_USER={db-user}
+                - DB_PASS={db-password}
+                - APP_PORT={app-port}
+                EOF
+                '''
+            }
+        }
         
         stage('Testing') {
             steps {
@@ -41,6 +63,14 @@ pipeline {
         
         stage('Deploy') {
             steps {
+                withCredentials ([
+                    string(credentialsId: 'db-name', variable: 'db-name'),
+                    string(credentialsId: 'db-user', variable: 'db-user'),
+                    string(credentialsId: 'db-password', variable: 'db-password'),
+                    string(credentialsId: 'db-host-container', variable: 'db-host-container'),
+                    string(credentialsId: 'app-port', variable: 'app-port')
+                ])
+
                 sh'''
                 docker compose up --build -d
                 '''

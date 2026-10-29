@@ -8,11 +8,11 @@ services:
     ports:
       - "3000"
     environment:
-      - DB_NAME=training
-      - DB_HOST=db
-      - DB_USER=peserta
-      - DB_PASS=password
-      - APP_PORT=3000
+      - DB_NAME=${db-name}
+      - DB_HOST=${db-host-container}
+      - DB_USER=${db-user}
+      - DB_PASS=${db-password}
+      - APP_PORT=${app-port}
     volumes:
       - app-data:/apps/public/images
 
